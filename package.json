@@ -9,8 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "rm": "rm -rf docs",
-    "mv": "mv build docs",
-    "git": "git add . && git commit && git push origin master",
+    "mv": "mv .next docs",
+    "git": "git add . && git commit && git push origin main",
     "deploy": "npm run rm && npm run build && npm run mv && npm run git"
   },
   "dependencies": {
