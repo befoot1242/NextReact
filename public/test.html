@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .image-container {
+            width: 700px;
+            /* 表示したい幅 */
+            height: 500px;
+            /* 表示したい高さ */
+            overflow: hidden;
+            /* 画像の一部だけを表示するために隠す */
+            position: relative;
+        }
+
+        .image-container img {
+            position: absolute;
+            top: 0px;
+            /* 画像をどこから表示するかの調整 */
+            left: 0px;
+            /* 画像をどこから表示するかの調整 */
+        }
+
+        .outer {
+            height: 95vh;
+            width: 95vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .character {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            background-color: red;
+            left: 10px;
+            top: 450px;
+            transform: translateY(-50%);
+        }
+    </style>
+    <script>
+        const staticVals = {
+            fieldHeight: 500,
+            fieldWidth: 3000,
+            screenHeight: 500,
+            screenWidth: 700,
+            speed: 30,
+            leftBound: 10,
+            rightBound: 500,
+        };
+        const max = (a, b) => (a < b) ? b : a;
+        const min = (a, b) => (a > b) ? b : a;
+        const pxToInt = (str) => {
+            if (str.length < 2) return 0;
+            str = str.slice(0, -2);
+            return parseInt(str, 10);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const img = document.querySelector('.image-container img');
+            const character = document.querySelector('.character');
+            let [y, x] = [pxToInt(img.style.top), pxToInt(img.style.left)];
+            let [cy, cx] = [pxToInt(character.style.top), pxToInt(character.style.left)];
+            cx = 10;
+            cy = 450;
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                    if (event.key === 'ArrowLeft') {
+                        if (cx > staticVals.leftBound) cx -= staticVals.speed;
+                        else x += staticVals.speed;
+                    } else if (event.key === 'ArrowRight') {
+                        if (cx < staticVals.rightBound) cx += staticVals.speed;
+                        else x -= staticVals.speed;
+                    }
+                    x = min(x, 0);
+                    x = max(x, -staticVals.fieldWidth + staticVals.screenWidth);
+                    // const loop = staticVals.screenWidth - staticVals.fieldWidth;
+                    // if (x <= loop) x = -x + loop;
+                    console.log("x : " + x + " cx : " + cx);
+                    img.style.left = x + 'px';
+                    character.style.left = cx + 'px';
+                }
+                if (event.key === ' ') {
+                    cy -= 5;
+                    character.style.top = cy + 'px';
+                }
+            });
+        });
+    </script>
+    <title>Partial Image Display</title>
+</head>
+
+<body>
+    <div class="outer">
+        <div class="image-container">
+            <img src="img/back-image.png" alt="Partial Image">
+            <div class="character"></div>
+        </div>
+    </div>
+
+</body>
+
+</html>
