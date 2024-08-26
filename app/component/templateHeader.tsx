@@ -37,10 +37,12 @@ export const TemplateHeader = (props: Props) => {
   // https://qiita.com/takubii/items/aa1f07f8ed2831dec21d
   // 参考
   const [menuOpen, setMenuOpen] = useState(false)
+  const [sidebarDisplay, setSidebarDisplay] = useState({ display: 'none' })
   const toggleMenu = () => {
     const sidebar = document.querySelector('.sidebar')
     if (!menuOpen) {
-      sidebar.style.display = 'block'
+      // sidebar.style.display = 'block'
+      setSidebarDisplay({ display: 'block' })
       // setMenuOpen(true)
       setTimeout(() => {
         setMenuOpen(true)
@@ -56,13 +58,14 @@ export const TemplateHeader = (props: Props) => {
     const sidebar = document.querySelector('.sidebar')
     const handleTransitionEnd = () => {
       if (!menuOpen) {
-        sidebar.style.display = 'none'
+        // sidebar.style.display = 'none'
+        setSidebarDisplay({ display: 'none' })
       }
     }
-    sidebar.addEventListener('transitionend', handleTransitionEnd)
+    // sidebar.addEventListener('transitionend', handleTransitionEnd)
 
     return () => {
-      sidebar.removeEventListener('transitionend', handleTransitionEnd)
+      // sidebar.removeEventListener('transitionend', handleTransitionEnd)
     }
   }, [menuOpen])
   // スライドするメニュー E
@@ -117,7 +120,7 @@ export const TemplateHeader = (props: Props) => {
         </div>
         {/* スライドするメニュー S */}
         {menuOpen && <div className="overlay" onClick={closeMenu}></div>}
-        <div className={`sidebar ${menuOpen ? 'open' : ''}`} style={{ display: 'none' }}>
+        <div className={`sidebar ${menuOpen ? 'open' : ''}`} style={sidebarDisplay}>
           {/* <div className={`sidebar ${menuOpen ? 'open' : ''}`}> */}
           <div className="hamburger-menu-close" onClick={toggleMenu}>
             <i className="bi bi-x-lg">スライドメニュー</i>
