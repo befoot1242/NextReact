@@ -55,7 +55,7 @@ export const TemplateHeader = (props: Props) => {
     setMenuOpen(false)
   }
   useEffect(() => {
-    const sidebar = document.querySelector('.sidebar')
+    // const sidebar = document.querySelector('.sidebar')
     const handleTransitionEnd = () => {
       if (!menuOpen) {
         // sidebar.style.display = 'none'
