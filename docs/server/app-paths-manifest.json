@@ -1,0 +1,9 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/game/page": "app/game/page.js",
+  "/todo/defaultPage/page": "app/todo/defaultPage/page.js",
+  "/todo/new2/page": "app/todo/new2/page.js",
+  "/todo/new/page": "app/todo/new/page.js"
+}

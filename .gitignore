@@ -6,11 +6,16 @@
 .pnp.js
 .yarn/install-state.gz
 
+# https://stackoverflow.com/questions/70683589/cannot-push-my-react-project-to-github-file-size-exceeds-file-size-of-100-00mb
+# で見た
+.eslintcache
+
 # testing
 /coverage
 
 # next.js
 /.next/
+/.next
 /out/
 
 # production
