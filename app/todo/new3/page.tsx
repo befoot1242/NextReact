@@ -3,23 +3,11 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 export default function Page() {
-  // const colors = []
-  // const recordCount = 25
-  // for (let i = 0; i < recordCount; i++) colors.push(i)
-  // const initialRows = colors.map((color, index) => (
-  //   <div key={color} className="todolist">
-  //     <div className="item name">name {+index}</div>
-  //     <div className="item detail">detail</div>
-  //     <div className="item check"></div>
-  //   </div>
-  // ))
-  let initialRows: any = []
   useEffect(() => {
     fetch('http://localhost:8080/employees', { method: 'GET' })
       .then((res) => res.json())
-      .then((json) =>
-        // console.log(json)
-        //(initialRows =
+      .then((json) => {
+        console.log(json)
         setRows(
           json._embedded.employeeList.map((obj: any, index: BigInteger) => (
             <div key={obj.id} className="todolist">
@@ -34,10 +22,10 @@ export default function Page() {
             </div>
           ))
         )
-      )
+      })
       .catch(() => alert('error'))
   })
-  const [rows, setRows] = useState(initialRows)
+  const [rows, setRows] = useState()
 
   return (
     <>
