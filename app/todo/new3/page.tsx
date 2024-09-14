@@ -1,47 +1,41 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import Link from 'next/link'
+
+type LinkType = {
+  name: string
+  localpath: string
+  uri: string
+}
 
 export default function Page() {
   useEffect(() => {
-    fetch('http://localhost:8080/employees', { method: 'GET' })
+    fetch('http://localhost:8080/', { method: 'GET' })
       .then((res) => res.json())
       .then((json) => {
         console.log(json)
-        setRows(
-          json._embedded.employeeList.map((obj: any, index: BigInteger) => (
-            <div key={obj.id} className="todolist">
-              <div className="item name">{obj.name}</div>
-              <div className="item detail">{obj.role}</div>
-              <Link
-                className="h-full w-full flex justify-center items-center"
-                href={obj._links.self.href}
-              >
-                new
-              </Link>{' '}
-            </div>
-          ))
-        )
+        let tmp: LinkType[] = [
+          { name: 'employees', localpath: json._links.employees.href, uri: '/employees' },
+          { name: 'orders', localpath: json._links.orders.href, uri: '/orders' },
+        ]
+        setRows(tmp)
       })
-      .catch(() => alert('error'))
-  })
-  const [rows, setRows] = useState()
+      .catch((error) => {
+        alert('エラー')
+        console.error('エラーです:', error)
+      })
+  }, [])
+  const [rows, setRows] = useState<LinkType[]>([])
 
   return (
     <>
-      {rows}
-      <form>
-        <div className="forminput">
-          <div className="item name">
-            <label htmlFor="name">Name:</label>
-            <input type="text" name="name" id="name" style={{ width: '100%' }} />
-          </div>
-          <div className="item detail">
-            <label htmlFor="detail">detail:</label>
-            <input type="text" name="detail" id="detail" style={{ width: '100%' }} />
-          </div>
+      {rows.map((obj, index) => (
+        <div key={index}>
+          <Link href={obj.localpath} as={`/orders?URI=${encodeURIComponent(obj.uri)}`}>
+            {obj.name}
+          </Link>{' '}
         </div>
-      </form>
+      ))}
     </>
   )
 }
