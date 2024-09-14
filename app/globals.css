@@ -158,3 +158,16 @@ body {
     text-wrap: balance;
   }
 }
+.todo-root-container {
+  --footer-height: 30px;
+}
+main {
+  margin-bottom: var(--footer-height);
+}
+footer {
+  position: fixed;
+  height: var(--footer-height);
+  bottom: 0;
+  margin: 0;
+  width: 100%;
+}

@@ -15,10 +15,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <>
+    <div className="todo-root-container">
       <TemplateHeader title="todo header" />
       <main>{children}</main>
       <TemplateFooter title="todo footer" />
-    </>
+    </div>
   )
 }

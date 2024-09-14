@@ -8,7 +8,7 @@ export const TemplateFooter = (props: Props) => {
   return (
     <footer
       className="bg-footer text-center"
-      style={{ position: 'sticky', left: '0', bottom: '0', width: '100%' }}
+      style={{ position: 'fixed', height: '30px', bottom: '0', margin: '0', width: '100%' }}
     >
       <div>{props.title}</div>
     </footer>
