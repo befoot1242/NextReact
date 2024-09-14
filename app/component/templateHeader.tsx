@@ -70,7 +70,7 @@ export const TemplateHeader = (props: Props) => {
   }, [menuOpen])
   // スライドするメニュー E
   return (
-    <header className="sticky left-0 top-0 w-[100%]">
+    <header className="sticky left-0 top-0">
       <nav>
         <div className="relative bg-header md:h-[50px] h-[70px] items-center flex">
           <GiKiwiBird size="3rem" />
