@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 // import { Darker_Grotesque, Grey_Qo } from 'next/font/google'
-// import Image from 'next/image'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 import { GiHamburgerMenu, GiKiwiBird } from 'react-icons/gi'
@@ -75,10 +75,8 @@ export const TemplateHeader = (props: Props) => {
         <div className="relative bg-header md:h-[50px] h-[70px] items-center flex">
           <GiKiwiBird size="3rem" />
           <h3 className="logo-wrapper">
-            <img
-              className="logo-img"
-              src="http://www.guitar-planet.co.uk/wp-content/uploads/2015/12/logo-Vintage.png"
-            />
+            {/* <img className="logo-img" src={logo} /> */}
+            <Image src="/logo-Vintage.png" alt="Logo" width={100} height={100} />
           </h3>
           <ul className="grid parent w-full">
             {/* <li className="nav-item justify-center items-center"> */}
@@ -93,8 +91,8 @@ export const TemplateHeader = (props: Props) => {
               </Link>
             </li>
             <li className="nav-item div3">
-              <Link className="h-full w-full flex justify-center items-center" href=".">
-                Three
+              <Link className="h-full w-full flex justify-center items-center" href="new3">
+                new3
               </Link>
             </li>
             <li className="nav-item div4">
