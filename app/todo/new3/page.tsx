@@ -2,6 +2,7 @@
 import { ReactElement, useEffect, useState } from 'react'
 // import Link from 'next/link'
 import { Link, Button, Toolbar, Typography, ButtonGroup, Grid, CardActions } from '@mui/material'
+import JSONViewer from '@/app/component/JSONViewer.js'
 import { Josefin_Sans } from 'next/font/google'
 
 type LinkType = {
@@ -32,15 +33,30 @@ export default function Page() {
   const [isMenu, setIsMenu] = useState<boolean>(true)
   const [isBusiness, setIsBusiness] = useState<boolean>(false)
   const [val, setVal] = useState<string>('Menu')
-  const [detail, setDetail] = useState<string>('Menu')
+  const [detailString, setDetailString] = useState<string>('Menu')
+  const [detail, setDetail] = useState<string[][]>()
 
   const fetchDetail = async (linkType: LinkType) => {
     fetch(linkType.uri, { method: 'GET' })
       .then((res) => res.json())
       .then((json) => {
         console.log(json)
-        debugger
-        setDetail(JSON.stringify(json))
+        setDetailString(JSON.stringify(json))
+
+        let ld: string[][] = []
+        let list = null
+        if (linkType.name === 'Employees') list = json._embedded.employeeList
+        else if (linkType.name === 'Orders') list = json._embedded.orderList
+
+        for (let obj in list) {
+          let ar: string[] = []
+          for (let key in list[obj]) {
+            if (key === '_links') ar.push(list[obj][key].self.href)
+            else ar.push(list[obj][key])
+          }
+          ld.push(ar)
+        }
+        setDetail(ld)
       })
       .catch((error) => {
         alert(linkType.uri + ' エラー')
@@ -82,7 +98,23 @@ export default function Page() {
           </Button>
         </ButtonGroup>
       </CardActions>
-      {isBusiness ? <>{detail}</> : ''}
+      {isBusiness ? (
+        <>
+          {/* {detail} */}
+          {detail?.map((row) => (
+            <div key={row[0]} className="flex">
+              {row.map((v) => (
+                <div key={v} className="w-[1000]">
+                  {v}
+                </div>
+              ))}
+            </div>
+          ))}
+          {/* <JSONViewer /> */}
+        </>
+      ) : (
+        ''
+      )}
     </>
   )
 }
