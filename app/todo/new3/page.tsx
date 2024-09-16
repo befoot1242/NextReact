@@ -1,21 +1,17 @@
 'use client'
 import { ReactElement, useEffect, useState } from 'react'
 import {
-  Link,
   Button,
-  Toolbar,
-  Typography,
   ButtonGroup,
-  Grid,
   CardActions,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
-  TextField,
   DialogActions,
 } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef, MuiEvent } from '@mui/x-data-grid'
+import MyModal from '@/app/parts/modal'
 
 type LinkType = {
   name: string
@@ -215,40 +211,16 @@ export default function Page() {
               pageSizeOptions={[100]}
               checkboxSelection
               disableRowSelectionOnClick
+              onCellClick={(params: GridCellParams) => {
+                handleClickOpen(params.value as string)
+              }}
             />
           }
         </>
       ) : (
         ''
       )}
-      <Dialog
-        open={open != ''}
-        onClose={handleClose}
-        PaperProps={{
-          component: 'form',
-          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault()
-            const formData = new FormData(event.currentTarget)
-            const formJson = Object.fromEntries((formData as any).entries())
-            const email = formJson.email
-            console.log(email)
-            handleClose()
-          },
-        }}
-      >
-        <DialogTitle>Subscribe</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
-            {detailData}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Subscribe</Button>
-        </DialogActions>
-      </Dialog>{' '}
+      <MyModal open={open != ''} onClose={handleClose} detailData={detailData} />
     </>
   )
 }
