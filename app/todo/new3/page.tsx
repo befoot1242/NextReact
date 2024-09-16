@@ -1,15 +1,6 @@
 'use client'
 import { ReactElement, useEffect, useState } from 'react'
-import {
-  Button,
-  ButtonGroup,
-  CardActions,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from '@mui/material'
+import { Button, ButtonGroup, CardActions } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef, MuiEvent } from '@mui/x-data-grid'
 import MyModal from '@/app/parts/modal'
 
@@ -159,66 +150,30 @@ export default function Page() {
               {obj.name}
             </Button>
           ))}
-          <Button
-            className="w-[100%]"
-            onClick={() => {
-              alert('Test')
-              handleStatus({ name: 'Test', uri: '', localpath: '' })
-            }}
-          >
-            test
-          </Button>
         </ButtonGroup>
       </CardActions>
-      {business === 'Employees' ? (
-        <>
-          {
-            <DataGrid
-              rows={employeeRows}
-              columns={employeeColumns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 10,
-                  },
-                },
-              }}
-              pageSizeOptions={[100]}
-              checkboxSelection
-              disableRowSelectionOnClick
-              onCellClick={(params: GridCellParams) => {
-                handleClickOpen(params.value as string)
-              }}
-            />
+      {!isMenu ? (
+        <DataGrid
+          rows={business === 'Employees' ? employeeRows : business === 'Orders' ? orderRows : []}
+          columns={
+            business === 'Employees' ? employeeColumns : business === 'Orders' ? orderColumns : []
           }
-        </>
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
+            },
+          }}
+          pageSizeOptions={[100]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          onCellClick={(params: GridCellParams) => {
+            handleClickOpen(params.value as string)
+          }}
+        />
       ) : (
-        ''
-      )}
-      {business === 'Orders' ? (
-        <>
-          {
-            <DataGrid
-              rows={orderRows}
-              columns={orderColumns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 10,
-                  },
-                },
-              }}
-              pageSizeOptions={[100]}
-              checkboxSelection
-              disableRowSelectionOnClick
-              onCellClick={(params: GridCellParams) => {
-                handleClickOpen(params.value as string)
-              }}
-            />
-          }
-        </>
-      ) : (
-        ''
+        ' '
       )}
       <MyModal open={open != ''} onClose={handleClose} detailData={detailData} />
     </>
