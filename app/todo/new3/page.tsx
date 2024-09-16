@@ -1,15 +1,56 @@
 'use client'
 import { ReactElement, useEffect, useState } from 'react'
-// import Link from 'next/link'
-import { Link, Button, Toolbar, Typography, ButtonGroup, Grid, CardActions } from '@mui/material'
-import JSONViewer from '@/app/component/JSONViewer.js'
-import { Josefin_Sans } from 'next/font/google'
+import {
+  Link,
+  Button,
+  Toolbar,
+  Typography,
+  ButtonGroup,
+  Grid,
+  CardActions,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogActions,
+} from '@mui/material'
+import { DataGrid, GridCellParams, GridColDef, MuiEvent } from '@mui/x-data-grid'
 
 type LinkType = {
   name: string
   localpath: string
   uri: string
 }
+type Employee = {
+  id: BigInteger
+  firstName: string
+  lastName: string
+  role: string
+  name: string
+  link: string
+}
+const employeeColumns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', type: 'number', flex: 1 },
+  { field: 'firstName', headerName: 'First name', flex: 3, editable: true },
+  { field: 'lastName', headerName: 'Last name', flex: 3, editable: true },
+  { field: 'role', headerName: 'role', flex: 3, editable: true },
+  { field: 'name', headerName: 'name', description: 'test', sortable: false, flex: 3 },
+  { field: 'link', headerName: 'link', flex: 3, editable: true },
+]
+
+type Order = {
+  id: BigInteger
+  description: string
+  status: string
+  link: string
+}
+const orderColumns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', type: 'number', flex: 1 },
+  { field: 'description', headerName: 'description', flex: 5, editable: true },
+  { field: 'status', headerName: 'status', flex: 5, editable: true },
+  { field: 'link', headerName: 'link', flex: 5, editable: true },
+]
 
 export default function Page() {
   useEffect(() => {
@@ -31,32 +72,69 @@ export default function Page() {
 
   const [rows, setRows] = useState<LinkType[]>([])
   const [isMenu, setIsMenu] = useState<boolean>(true)
-  const [isBusiness, setIsBusiness] = useState<boolean>(false)
-  const [val, setVal] = useState<string>('Menu')
-  const [detailString, setDetailString] = useState<string>('Menu')
-  const [detail, setDetail] = useState<string[][]>()
+  const [business, setBusiness] = useState<string>('')
+  const [employeeRows, setEmployeeRows] = useState<Employee[]>()
+  const [orderRows, setOrderRows] = useState<Order[]>()
+  const [open, setOpen] = useState<string>('')
+  const [detailData, setDetailData] = useState<string>('')
 
-  const fetchDetail = async (linkType: LinkType) => {
+  const handleClickOpen = (uri: string) => {
+    fetchDetail({ name: '', localpath: '', uri: uri })
+    setOpen(uri)
+  }
+
+  const handleClose = () => {
+    setOpen('')
+  }
+
+  const fetchList = async (linkType: LinkType) => {
     fetch(linkType.uri, { method: 'GET' })
       .then((res) => res.json())
       .then((json) => {
         console.log(json)
-        setDetailString(JSON.stringify(json))
 
-        let ld: string[][] = []
+        let ld: any[] = []
         let list = null
         if (linkType.name === 'Employees') list = json._embedded.employeeList
         else if (linkType.name === 'Orders') list = json._embedded.orderList
 
-        for (let obj in list) {
-          let ar: string[] = []
-          for (let key in list[obj]) {
-            if (key === '_links') ar.push(list[obj][key].self.href)
-            else ar.push(list[obj][key])
+        for (let key1 in list) {
+          if (linkType.name === 'Employees') {
+            list = json._embedded.employeeList
+            let ar: Employee = {
+              id: list[key1].id,
+              firstName: list[key1].firstName,
+              lastName: list[key1].lastName,
+              role: list[key1].role,
+              name: list[key1].name,
+              link: list[key1]._links.self.href,
+            }
+            ld.push(ar)
+          } else if (linkType.name === 'Orders') {
+            list = json._embedded.orderList
+            let ar: Order = {
+              id: list[key1].id,
+              description: list[key1].description,
+              status: list[key1].description,
+              link: list[key1]._links.self.href,
+            }
+            ld.push(ar)
           }
-          ld.push(ar)
         }
-        setDetail(ld)
+        if (linkType.name === 'Employees') setEmployeeRows(ld)
+        else if (linkType.name === 'Orders') setOrderRows(ld)
+      })
+      .catch((error) => {
+        alert(linkType.uri + ' エラー')
+        console.error('エラーです:', error)
+      })
+  }
+  const fetchDetail = async (linkType: LinkType) => {
+    fetch(linkType.uri, { method: 'GET' })
+      .then((res) => res.json())
+      .then((json) => {
+        debugger
+        setDetailData(JSON.stringify(json))
       })
       .catch((error) => {
         alert(linkType.uri + ' エラー')
@@ -66,10 +144,8 @@ export default function Page() {
 
   const handleStatus = (type: LinkType) => {
     setIsMenu(false)
-    setIsBusiness(true)
-    setVal(type.name)
-    fetchDetail(type)
-    // setVal(ret)
+    setBusiness(type.name)
+    fetchList(type)
   }
 
   return (
@@ -98,23 +174,81 @@ export default function Page() {
           </Button>
         </ButtonGroup>
       </CardActions>
-      {isBusiness ? (
+      {business === 'Employees' ? (
         <>
-          {/* {detail} */}
-          {detail?.map((row) => (
-            <div key={row[0]} className="flex">
-              {row.map((v) => (
-                <div key={v} className="w-[1000]">
-                  {v}
-                </div>
-              ))}
-            </div>
-          ))}
-          {/* <JSONViewer /> */}
+          {
+            <DataGrid
+              rows={employeeRows}
+              columns={employeeColumns}
+              initialState={{
+                pagination: {
+                  paginationModel: {
+                    pageSize: 10,
+                  },
+                },
+              }}
+              pageSizeOptions={[100]}
+              checkboxSelection
+              disableRowSelectionOnClick
+              onCellClick={(params: GridCellParams) => {
+                handleClickOpen(params.value as string)
+              }}
+            />
+          }
         </>
       ) : (
         ''
       )}
+      {business === 'Orders' ? (
+        <>
+          {
+            <DataGrid
+              rows={orderRows}
+              columns={orderColumns}
+              initialState={{
+                pagination: {
+                  paginationModel: {
+                    pageSize: 10,
+                  },
+                },
+              }}
+              pageSizeOptions={[100]}
+              checkboxSelection
+              disableRowSelectionOnClick
+            />
+          }
+        </>
+      ) : (
+        ''
+      )}
+      <Dialog
+        open={open != ''}
+        onClose={handleClose}
+        PaperProps={{
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault()
+            const formData = new FormData(event.currentTarget)
+            const formJson = Object.fromEntries((formData as any).entries())
+            const email = formJson.email
+            console.log(email)
+            handleClose()
+          },
+        }}
+      >
+        <DialogTitle>Subscribe</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To subscribe to this website, please enter your email address here. We will send updates
+            occasionally.
+            {detailData}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button type="submit">Subscribe</Button>
+        </DialogActions>
+      </Dialog>{' '}
     </>
   )
 }
